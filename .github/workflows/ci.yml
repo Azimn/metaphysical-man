@@ -19,3 +19,4 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: pytest
       - run: madman all --seed 7 --json
+      - run: madman hostile --seed 7 --json
