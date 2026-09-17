@@ -20,3 +20,4 @@ jobs:
       - run: pytest
       - run: madman all --seed 7 --json
       - run: madman hostile --seed 7 --json
+      - run: python -m madman.hostile_round2
