@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 
+from .hostile import run_hostile_review
 from .scenarios import (
     attention_experiment,
     echo_experiment,
@@ -28,10 +29,22 @@ SCENARIOS = {
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run MADMAN digital-metaphysics experiments")
-    parser.add_argument("scenario", choices=["all", *SCENARIOS], nargs="?", default="all")
+    parser.add_argument("scenario", choices=["all", "hostile", *SCENARIOS], nargs="?", default="all")
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args()
+
+    if args.scenario == "hostile":
+        result = run_hostile_review(args.seed)
+        if args.as_json:
+            print(json.dumps(result, indent=2, sort_keys=True))
+            return
+        for name, metrics in result.items():
+            print(f"[{name}]")
+            for key, value in metrics.items():
+                print(f"  {key}: {value}")
+        return
+
     results = run_all(args.seed) if args.scenario == "all" else (SCENARIOS[args.scenario](args.seed),)
     if args.as_json:
         print(json.dumps([{"name": r.name, "metrics": r.metrics} for r in results], indent=2, sort_keys=True))
